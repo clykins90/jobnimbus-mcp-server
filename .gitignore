@@ -1,0 +1,27 @@
+# Node.js
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+!.env.example
+
+# TypeScript cache
+*.tsbuildinfo
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Cursor specifics
+.cursor/
+.mcp.json
+!.mcp.json.example
+
+cursor rules
+.cursor*
+.backend.mdc

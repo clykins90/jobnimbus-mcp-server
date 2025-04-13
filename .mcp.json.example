@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "jobnimbus-local-server-npx": {
+      "command": "npx",
+      "args": ["jobnimbus-mcp-server"],
+      "env": {
+        "JOBNIMBUS_API_KEY": "your_api_key_here"
+      }
+    },
+    "jobnimbus-local-server-local": {
+      "command": "npm",
+      "args": ["start"],
+      "cwd": "/path/to/jobnimbus-mcp-server",
+      "env": {
+        "JOBNIMBUS_API_KEY": "your_api_key_here"
+      }
+    }
+  }
+} 

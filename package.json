@@ -1,0 +1,41 @@
+{
+  "name": "jobnimbus-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for interacting with the JobNimbus API",
+  "main": "dist/server.js",
+  "type": "module",
+  "bin": {
+    "jobnimbus-mcp-server": "./dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsc -w & node --watch dist/server.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "jobnimbus",
+    "typescript",
+    "model-context-protocol"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "axios": "^1.7.2",
+    "dotenv": "^16.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "typescript": "^5.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/jobnimbus-mcp-server.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
