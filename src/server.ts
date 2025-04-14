@@ -611,13 +611,21 @@ createTool("jobnimbus_get_invoice", GetInvoiceInputSchema, 'get', (input) => `/i
 // 3. Create Invoice
 const CreateInvoiceInputSchema = z.object({
     // Basic invoice details
+    type: z.string().default("invoice").optional(), // Type of record
     number: z.string().optional(), // Invoice number
     title: z.string().optional(), // Invoice title
     description: z.string().optional(), // Invoice description
-    status: z.string().optional(), // Invoice status (e.g., "Draft", "Sent")
+    status: z.union([z.string(), z.number()]).optional(), // Invoice status (e.g., "Draft", "Sent" or numeric ID)
     date: z.string().optional(), // Invoice date (ISO format)
-    due_date: z.string().optional(), // Due date (ISO format)
+    date_invoice: z.number().optional(), // Invoice date in Unix timestamp
+    date_due: z.number().optional(), // Due date in Unix timestamp
+    date_created: z.number().optional(), // Creation date in Unix timestamp
+    date_updated: z.number().optional(), // Last update date in Unix timestamp
+    due_date: z.string().optional(), // Due date (ISO format) - alternative to date_due
     terms: z.string().optional(), // Payment terms
+    external_id: z.string().optional(), // External ID
+    is_active: z.boolean().optional(), // Whether the invoice is active
+    internal_note: z.string().optional(), // Internal notes
     
     // Amounts and totals
     subtotal: z.number().optional(), // Subtotal amount
@@ -636,18 +644,20 @@ const CreateInvoiceInputSchema = z.object({
     job: z.object({
         id: z.string()
     }).optional(), // Alternative format for job
+    related: z.array(z.object({
+        id: z.string(),
+        type: z.string()
+    })).optional(), // Related records like jobs
     
-    // Line items
-    line_items: z.array(z.object({
-        product_id: z.string().optional(), // JNID of product
+    // Line items - API format only
+    items: z.array(z.object({
+        jnid: z.string().optional(), // JNID of product
         name: z.string(), // Line item name
         description: z.string().optional(), // Line item description
         quantity: z.number(), // Quantity
-        unit_price: z.number(), // Unit price
-        amount: z.number().optional(), // Total line amount
-        tax_rate: z.number().optional(), // Line-specific tax rate
-        is_taxable: z.boolean().optional(), // Whether line is taxable
-        unit_of_measure: z.string().optional(), // Unit of measure
+        price: z.number(), // Unit price
+        uom: z.string().optional(), // Unit of measure
+        item_type: z.string().optional(), // Item type (e.g., "material", "labor")
     })).optional(),
 }).passthrough();
 
@@ -681,13 +691,21 @@ createTool(
 const UpdateInvoiceInputSchema = z.object({
     id: z.string(), // JNID of the invoice to update
     // All fields are optional for update
+    type: z.string().default("invoice").optional(), // Type of record
     number: z.string().optional(),
     title: z.string().optional(),
     description: z.string().optional(),
-    status: z.string().optional(),
+    status: z.union([z.string(), z.number()]).optional(), // Status can be string or number
     date: z.string().optional(),
+    date_invoice: z.number().optional(), // Invoice date in Unix timestamp
+    date_due: z.number().optional(), // Due date in Unix timestamp
+    date_created: z.number().optional(), // Creation date in Unix timestamp
+    date_updated: z.number().optional(), // Last update date in Unix timestamp
     due_date: z.string().optional(),
     terms: z.string().optional(),
+    external_id: z.string().optional(), // External ID
+    is_active: z.boolean().optional(), // Whether the invoice is active
+    internal_note: z.string().optional(), // Internal notes
     
     subtotal: z.number().optional(),
     tax_amount: z.number().optional(),
@@ -704,18 +722,21 @@ const UpdateInvoiceInputSchema = z.object({
     job: z.object({
         id: z.string()
     }).optional(),
+    related: z.array(z.object({
+        id: z.string(),
+        type: z.string()
+    })).optional(), // Related records like jobs
     
-    line_items: z.array(z.object({
+    // Line items - API format only
+    items: z.array(z.object({
         id: z.string().optional(), // Existing line item ID for updates
-        product_id: z.string().optional(),
-        name: z.string().optional(),
-        description: z.string().optional(),
-        quantity: z.number().optional(),
-        unit_price: z.number().optional(),
-        amount: z.number().optional(),
-        tax_rate: z.number().optional(),
-        is_taxable: z.boolean().optional(),
-        unit_of_measure: z.string().optional(),
+        jnid: z.string().optional(), // JNID of product
+        name: z.string().optional(), // Line item name
+        description: z.string().optional(), // Line item description
+        quantity: z.number().optional(), // Quantity
+        price: z.number().optional(), // Unit price
+        uom: z.string().optional(), // Unit of measure
+        item_type: z.string().optional(), // Item type (e.g., "material", "labor")
     })).optional(),
 }).passthrough();
 
