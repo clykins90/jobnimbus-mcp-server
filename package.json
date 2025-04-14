@@ -7,6 +7,11 @@
   "bin": {
     "jobnimbus-mcp-server": "./dist/server.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
@@ -17,7 +22,9 @@
     "mcp",
     "jobnimbus",
     "typescript",
-    "model-context-protocol"
+    "model-context-protocol",
+    "cursor",
+    "api"
   ],
   "author": "",
   "license": "MIT",
@@ -33,7 +40,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/jobnimbus-mcp-server.git"
+    "url": "git+https://github.com/yourusername/jobnimbus-mcp-server.git"
   },
   "engines": {
     "node": ">=18.0.0"

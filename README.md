@@ -1,191 +1,108 @@
 # JobNimbus MCP Server
 
-This project provides a [Model Context Protocol (MCP)](https://github.com/modelcontextprotocol/typescript-sdk) server for interacting with the JobNimbus API. It allows AI assistants to access and manipulate JobNimbus data through standardized tools.
+This project provides a [Model Context Protocol (MCP)](https://docs.cursor.com/context/model-context-protocol) server for interacting with the JobNimbus API via compatible AI assistants like Cursor and Claude.
 
-## Features
+It allows AI agents to access and manipulate JobNimbus data (Contacts, Jobs, Tasks, Products, Workflows, Invoices) through standardized tools, using your JobNimbus API key for secure access.
 
-* **Complete JobNimbus API Integration**: Access to Contacts, Jobs, Tasks, Products, Workflows, and Invoices
-* **Secure Access**: Requires JobNimbus API key for authentication
-* **Easy Setup**: Simple configuration for use with Cursor editor, Claude, and other AI assistants
-* **Cross-Platform**: Works with any MCP-compatible client
+This server is published on npm and can be easily run using `npx`.
 
-## Quick Start
+## Setup Instructions
 
-1. **With NPX** (easiest):
-   ```bash
-   export JOBNIMBUS_API_KEY=your_api_key_here
-   npx jobnimbus-mcp-server
-   ```
+Follow the instructions below for your specific AI assistant.
 
-2. **With Claude Desktop**: Edit `~/Library/Application Support/Claude/claude_desktop_config.json` to point to the server
+### Setup for Cursor Editor
 
-3. **With Cursor**: Create `.mcp.json` in your project with the server configuration
+1.  **Prerequisites:**
+    *   Cursor Editor installed.
+    *   Node.js and npm installed (required for `npx`).
+    *   Your JobNimbus API Key.
 
-4. **Local Installation**: Clone, build and run:
-   ```bash
-   git clone https://github.com/yourusername/jobnimbus-mcp-server.git
-   cd jobnimbus-mcp-server
-   npm install
-   npm run build
-   npm start
-   ```
+2.  **Configure Cursor:**
+    *   Create the directory `~/.cursor` in your home directory if it doesn't exist.
+    *   Create a file named `mcp.json` inside this directory (`~/.cursor/mcp.json`).
+    *   Copy the following configuration into `~/.cursor/mcp.json`:
 
-## Installation Options
+        ```json
+        {
+          "mcpServers": {
+            "jobnimbus-local-server": {
+              "description": "JobNimbus MCP Server (requires API key)",
+              "command": "npx",
+              "args": ["jobnimbus-mcp-server"],
+              "env": {
+                "JOBNIMBUS_API_KEY": "your_api_key_here"
+              }
+            }
+          }
+        }
+        ```
 
-### Option 1: Install via NPX (Easiest)
+    *   **IMPORTANT:** Replace `"your_api_key_here"` inside the file with your **actual JobNimbus API Key**.
 
-You can install and run the server directly with NPX:
+3.  **Restart Cursor:**
+    *   Completely quit and restart the Cursor editor.
 
-```bash
-# Set your JobNimbus API key as an environment variable
-export JOBNIMBUS_API_KEY=your_api_key_here
+4.  **Verify:**
+    *   Cursor will automatically run the server using `npx` when needed.
+    *   You should see `jobnimbus-local-server` listed under available tools in Cursor's MCP settings or when the agent suggests tools.
+    *   You can now ask Cursor to perform actions using the JobNimbus tools (e.g., "List my JobNimbus contacts using jobnimbus_list_contacts").
 
-# Run the server directly with NPX
-npx jobnimbus-mcp-server
-```
+### Setup for Claude Desktop App
 
-### Option 2: Clone the Repository
+1.  **Prerequisites:**
+    *   Claude Desktop App installed.
+    *   Node.js and npm installed (required for `npx`).
+    *   Your JobNimbus API Key.
 
-1. **Clone this repository:**
-   ```bash
-   git clone https://github.com/yourusername/jobnimbus-mcp-server.git
-   cd jobnimbus-mcp-server
-   ```
+2.  **Configure Claude:**
+    *   Locate the Claude configuration file:
+        *   On Mac: `~/Library/Application Support/Claude/claude_desktop_config.json`
+        *   On Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+    *   Create the file if it doesn't exist. If it exists, carefully merge the `mcpServers` section.
+    *   Add the following configuration:
 
-2. **Prerequisites:** Node.js (v18 or later) and npm.
+        ```json
+        {
+          "mcpServers": {
+            "jobnimbus-local-server": {
+              "description": "JobNimbus MCP Server (requires API key)",
+              "command": "npx",
+              "args": ["jobnimbus-mcp-server"],
+              "env": {
+                "JOBNIMBUS_API_KEY": "your_api_key_here"
+              }
+            }
+          }
+        }
+        ```
 
-3. **Install Dependencies:**
-   ```bash
-   npm install
-   ```
+    *   **IMPORTANT:** Replace `"your_api_key_here"` inside the file with your **actual JobNimbus API Key**.
 
-4. **API Key:** Create a `.env` file in the root of the project with your JobNimbus API key:
-   ```
-   JOBNIMBUS_API_KEY=your_api_key_here
-   ```
-   *Replace `your_api_key_here` with your actual key.* **Do not commit the `.env` file to version control.**
+3.  **Restart Claude App:**
+    *   Completely quit and restart the Claude desktop application.
 
-5. **Build and Run:**
-   ```bash
-   npm run build
-   npm start
-   ```
+4.  **Verify:**
+    *   Claude should now be able to discover and use the JobNimbus tools provided by the server.
 
-## Running the Server
+**How it works (for both assistants):**
 
-1. **Build the TypeScript code:**
-   ```bash
-   npm run build
-   ```
+*   The configuration tells the assistant to use `npx` to run `jobnimbus-mcp-server`.
+*   `npx` automatically downloads the latest version of the server package from npm if it's not already cached.
+*   The assistant injects your API key from the `env` section into the server process.
 
-2. **Start the server:**
-   ```bash
-   npm start
-   ```
-   The server will connect via stdio and listen for MCP requests.
+## Running Manually (Advanced / Other Clients)
 
-3. **Development Mode** (watches for changes and rebuilds/restarts):
-   ```bash
-   npm run dev
-   ```
+If you need to run the server manually for debugging or for use with other potential MCP clients supporting stdio:
 
-## Using with Cursor Editor
-
-To use this MCP server with the Cursor editor:
-
-1. Create a `.mcp.json` file in your Cursor project root directory:
-   ```json
-   {
-     "mcpServers": {
-       "jobnimbus-local-server": {
-         "command": "npx",
-         "args": ["jobnimbus-mcp-server"],
-         "env": {
-           "JOBNIMBUS_API_KEY": "your_api_key_here"
-         }
-       }
-     }
-   }
-   ```
-
-   Or if using a local installation:
-   ```json
-   {
-     "mcpServers": {
-       "jobnimbus-local-server": {
-         "command": "npm",
-         "args": ["start"],
-         "cwd": "/absolute/path/to/jobnimbus-mcp-server",
-         "env": {
-           "JOBNIMBUS_API_KEY": "your_api_key_here"
-         }
-       }
-     }
-   }
-   ```
-
-2. Restart Cursor to load the MCP configuration.
-
-## Using with Claude
-
-The server can be used with Anthropic's Claude AI assistant which supports the Model Context Protocol:
-
-1. Install Claude desktop app if you haven't already
-
-2. Build your JobNimbus MCP server:
-   ```bash
-   npm run build
-   ```
-
-3. Create or edit Claude's configuration file:
-   - On Mac: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - On Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-
-4. Add the following configuration (adjust paths to your installation):
-   ```json
-   {
-     "mcpServers": {
-       "jobnimbus-local-server": {
-         "command": "/path/to/your/node",
-         "args": [
-           "/absolute/path/to/jobnimbus-mcp-server/dist/server.js"
-         ],
-         "env": {
-           "JOBNIMBUS_API_KEY": "your_api_key_here"
-         }
-       }
-     }
-   }
-   ```
-
-   For example, with Node.js installed via NVM on Mac:
-   ```json
-   {
-     "mcpServers": {
-       "jobnimbus-local-server": {
-         "command": "/Users/username/.nvm/versions/node/v16.20.0/bin/node",
-         "args": [
-           "/Users/username/projects/jobnimbus-mcp-server/dist/server.js"
-         ],
-         "env": {
-           "JOBNIMBUS_API_KEY": "your_api_key_here"
-         }
-       }
-     }
-   }
-   ```
-
-5. Restart Claude desktop app
-
-6. When you're in a conversation with Claude, you can now use JobNimbus tools with commands like:
-   - "Please list all contacts in my JobNimbus account"
-   - "Create a new job for customer John Smith"
-   - "Show me all invoices that are past due"
-   - "Update the status of job J-12345 to 'In Progress'"
-
-## Using with Other AI Assistants
-
-For other AI assistants that support the Model Context Protocol, use a similar configuration as shown above for Cursor.
+1.  Set the API key environment variable:
+    ```bash
+    export JOBNIMBUS_API_KEY=your_actual_api_key_here
+    ```
+2.  Run the server:
+    ```bash
+    npx jobnimbus-mcp-server
+    ```
+    The server will listen for MCP communication over stdin/stdout.
 
 ## Implemented Tools
 
@@ -228,10 +145,19 @@ This server implements MCP tools corresponding to the JobNimbus API endpoints:
 * `jobnimbus_send_invoice`: Send an invoice via email
 * `jobnimbus_record_invoice_payment`: Record a payment against an invoice
 
+## Development
+
+If you want to contribute or modify the server:
+
+1.  Clone the repository: `git clone <repository_url>`
+2.  Install dependencies: `cd jobnimbus-mcp-server && npm install`
+3.  Make changes in the `src/` directory.
+4.  Build: `npm run build`
+5.  Test locally (requires `.env` file or exported API key):
+    *   Run directly: `npm start`
+    *   Run with auto-reload: `npm run dev`
+    *   Link for global testing: `npm link` (remember to `npm unlink -g jobnimbus-mcp-server` when done)
+
 ## License
 
-MIT
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. 
+MIT 
